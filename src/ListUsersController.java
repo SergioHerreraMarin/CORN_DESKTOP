@@ -1,4 +1,5 @@
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.ResourceBundle;
 
 import org.json.JSONArray;
@@ -26,6 +27,10 @@ public class ListUsersController implements Initializable {
     private Label dataEmail;
     @FXML
     private Label dataBalance;
+    @FXML
+    private Label dataUserStatus;
+    @FXML
+    private Label dataLastStatusModified;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -52,6 +57,13 @@ public class ListUsersController implements Initializable {
         this.dataBalance.setText(dataBalance);
     }
 
+    public void setUserStatus(String userStatus){
+        this.dataUserStatus.setText(userStatus);
+    }
+
+    public void setLastStatusModified(String lastStatusModified){
+        this.dataLastStatusModified.setText(lastStatusModified);
+    }
 
     private void getUsers(){
 
@@ -82,13 +94,18 @@ public class ListUsersController implements Initializable {
                         System.out.println(user.getString("userName"));
                         System.out.println(user.getString("userLastName"));
                         System.out.println(user.getString("userPhoneNumber"));
+                        System.out.println(user.getString("userStatus"));
+                        System.out.println(user.getString("userStatusModifyTime"));
 
-                        // Fill template with console information
-                        userItemController.setName("Name: " + user.getString("userName"));
-                        userItemController.setLastName("Last Name: " + user.getString("userLastName"));
-                        userItemController.setPhoneNumber("Phone Number: " + user.getString("userPhoneNumber"));
-                        userItemController.setEmail("Email: " + user.getString("userEmail"));
-                        userItemController.setBalance("Balance: " + user.getString("balance"));
+
+                        // Fill user item 
+                        userItemController.setName(user.getString("userName"));
+                        userItemController.setLastName(user.getString("userLastName"));
+                        userItemController.setPhoneNumber(user.getString("userPhoneNumber"));
+                        userItemController.setEmail(user.getString("userEmail"));
+                        userItemController.setBalance(user.getString("userBalance"));
+                        userItemController.setStatus(user.getString("userStatus"));
+                        userItemController.setLastStatusModified(dateFormat(user.getString("userStatusModifyTime")));
                         yPane.getChildren().add(itemTemplate);
 
                     }catch(Exception e){
@@ -98,6 +115,14 @@ public class ListUsersController implements Initializable {
             }
 
         });
+    }
+
+
+    private String dateFormat(String date){
+        String newDateFormat = "";
+        newDateFormat = date.replace('T', ' ');
+        newDateFormat = newDateFormat.replace(".000Z", "");
+        return newDateFormat;
     }
 
 }

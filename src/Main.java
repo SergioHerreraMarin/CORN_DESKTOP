@@ -38,7 +38,7 @@ public class Main extends Application {
     @Override
     public void start(Stage stage) throws Exception {
 
-        final int windowWidth = 800;
+        final int windowWidth = 900;
         final int windowHeight = 600;
 
         UtilsViews.parentContainer.setStyle("-fx-font: 14 arial;");
@@ -78,7 +78,6 @@ public class Main extends Application {
     }
 
 
-
     public static void addTransaction(){
         JSONObject obj = new JSONObject("{}");
 
@@ -94,7 +93,6 @@ public class Main extends Application {
             }
         });
     }
-
 
     public static void addUser(){
         JSONObject obj = new JSONObject("{}");

@@ -9,9 +9,11 @@ public class UserItemController {
     private Label lastName;
     @FXML
     private Label phoneNumber;
-
+    
     private String email;
     private String balance;
+    private String userStatus;
+    private String lastStatusModified;
 
 
     public void setName(String name){
@@ -34,7 +36,15 @@ public class UserItemController {
         this.balance = balance;
     }
 
-    
+    public void setStatus(String userStatus){
+        this.userStatus = userStatus;
+    }
+
+    public void setLastStatusModified(String lastStatusModified){
+        this.lastStatusModified = lastStatusModified;
+    }
+
+
     @FXML
     private void handleMenuAction() {
         ListUsersController listUsersController = (ListUsersController) UtilsViews.getController("listUsersView");
@@ -43,6 +53,8 @@ public class UserItemController {
         listUsersController.setDataPhoneNumber(phoneNumber.getText());
         listUsersController.setDataEmail(email);
         listUsersController.setDataBalance(balance);
+        listUsersController.setUserStatus(userStatus);
+        listUsersController.setLastStatusModified(lastStatusModified);
     }
 
 }
