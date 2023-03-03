@@ -44,6 +44,7 @@ public class Main extends Application {
         UtilsViews.parentContainer.setStyle("-fx-font: 14 arial;");
         UtilsViews.addView(getClass(), "listUsersView", "./src/listUsersView.fxml");
         UtilsViews.addView(getClass(), "userItemView", "./src/userItemView.fxml");
+        UtilsViews.addView(getClass(), "transactionItemView", "./src/transactionItemView.fxml");
 
         Scene scene = new Scene(UtilsViews.parentContainer);
         

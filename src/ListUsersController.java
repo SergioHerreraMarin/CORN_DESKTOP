@@ -1,5 +1,4 @@
 import java.net.URL;
-import java.text.SimpleDateFormat;
 import java.util.ResourceBundle;
 
 import org.json.JSONArray;
@@ -16,7 +15,8 @@ public class ListUsersController implements Initializable {
 
     @FXML
     private VBox yPane = new VBox();
-
+    @FXML
+    private VBox transactionsyPane = new VBox();
     @FXML
     private Label dataName;
     @FXML
@@ -96,8 +96,7 @@ public class ListUsersController implements Initializable {
                         System.out.println(user.getString("userPhoneNumber"));
                         System.out.println(user.getString("userStatus"));
                         System.out.println(user.getString("userStatusModifyTime"));
-
-
+                        
                         // Fill user item 
                         userItemController.setName(user.getString("userName"));
                         userItemController.setLastName(user.getString("userLastName"));
@@ -113,10 +112,46 @@ public class ListUsersController implements Initializable {
                     }
                 }
             }
-
         });
     }
 
+
+    public void getTransactionsUser(String phoneNumber){
+
+        transactionsyPane.getChildren().clear();
+
+        JSONObject obj = new JSONObject("{}");
+        obj.put("phone", phoneNumber);
+        UtilsHTTP.sendPOST(Main.protocol + "://" + Main.host + ":" + Main.port + "/api/transaccions", obj.toString(), (response) -> {
+
+            JSONObject objResponse = new JSONObject(response);
+            if (objResponse.getString("status").equals("OK")) {
+
+                JSONArray JSONlist = objResponse.getJSONArray("transactions"); //Este devuelve un array de objetos json
+                URL resource = this.getClass().getResource("./src/transactionItemView.fxml");
+
+                for(int i = 0; i < JSONlist.length(); i++){ 
+                    JSONObject transaction = JSONlist.getJSONObject(i);
+                    
+                    try{
+                        FXMLLoader loader = new FXMLLoader(resource);
+                        Parent itemTemplate = loader.load();
+                        TransactionItemController transactionItemController = loader.getController();
+                        
+                        System.out.println(transaction.getString("origin"));
+                        transactionItemController.setOrigin(transaction.getString("origin"));
+                        transactionItemController.setDestination(transaction.getString("destination"));
+                        transactionItemController.setAmount(transaction.getString("amount"));
+                        transactionItemController.setTimeFinish(dateFormat(transaction.getString("timeFinish")));
+                        transactionsyPane.getChildren().add(itemTemplate);
+
+                    }catch(Exception e){
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+    }
 
     private String dateFormat(String date){
         String newDateFormat = "";
@@ -126,3 +161,4 @@ public class ListUsersController implements Initializable {
     }
 
 }
+//insert into Transactions(origin,destination,amount,token,accepted,timeSetup,timeStart,timeFinish) values (984752897, 661571197,'45',"abcde",false,NOW(),NOW(),NOW());

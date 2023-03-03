@@ -55,6 +55,7 @@ public class UserItemController {
         listUsersController.setDataBalance(balance);
         listUsersController.setUserStatus(userStatus);
         listUsersController.setLastStatusModified(lastStatusModified);
+        listUsersController.getTransactionsUser(phoneNumber.getText());
     }
 
 }
