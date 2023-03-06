@@ -137,9 +137,11 @@ public class ListUsersController implements Initializable {
                         FXMLLoader loader = new FXMLLoader(resource);
                         Parent itemTemplate = loader.load();
                         TransactionItemController transactionItemController = loader.getController();
-                        
-                        System.out.println(transaction.getString("origin"));
-                        transactionItemController.setOrigin(transaction.getString("origin"));
+                        if(transaction.getInt("accepted") == 1){
+                            transactionItemController.setOrigin(transaction.getString("origin"));
+                        }else{
+                            transactionItemController.setOrigin("");
+                        }
                         transactionItemController.setDestination(transaction.getString("destination"));
                         transactionItemController.setAmount(transaction.getString("amount"));
                         transactionItemController.setTimeFinish(dateFormat(transaction.getString("timeFinish")));
