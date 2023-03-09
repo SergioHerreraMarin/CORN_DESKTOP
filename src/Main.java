@@ -50,10 +50,12 @@ public class Main extends Application {
         
         stage.setScene(scene);
         stage.onCloseRequestProperty(); // Call close method when closing window
-        stage.setTitle("JavaFX - NodeJS");
+        stage.setTitle("CORN DESKTOP");
         stage.setMinWidth(windowWidth);
         stage.setMinHeight(windowHeight);
+        stage.setResizable(false);
         stage.show();
+        
 
         // Add icon only if not Mac
         if (!System.getProperty("os.name").contains("Mac")) {
@@ -116,5 +118,9 @@ public class Main extends Application {
             }
         });
     }
+
+
+
+
 
 }

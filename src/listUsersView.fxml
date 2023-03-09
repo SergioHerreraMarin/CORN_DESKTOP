@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -10,12 +13,12 @@
 
 <AnchorPane fx:id="anchor" maxHeight="600.0" maxWidth="900.0" minHeight="600.0" minWidth="900.0" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ListUsersController">
    <children>
-      <Label alignment="CENTER" layoutX="10.0" layoutY="16.0" prefHeight="17.0" prefWidth="800.0" text="USERS LIST" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="16.0">
+      <Label alignment="CENTER" layoutX="10.0" layoutY="36.0" prefHeight="17.0" prefWidth="800.0" text="USUARIS" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="35.0">
          <font>
             <Font name="Arial Bold" size="36.0" />
          </font>
       </Label>
-      <SplitPane dividerPositions="0.47635135135135137" layoutX="66.0" layoutY="87.0" prefHeight="469.0" prefWidth="769.0">
+      <SplitPane dividerPositions="0.47635135135135137" layoutX="66.0" layoutY="87.0" prefHeight="469.0" prefWidth="769.0" AnchorPane.bottomAnchor="44.0" AnchorPane.leftAnchor="66.0" AnchorPane.rightAnchor="65.0" AnchorPane.topAnchor="87.0">
         <items>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
                <children>
@@ -32,7 +35,7 @@
                      <children>
                         <HBox prefHeight="100.0" prefWidth="200.0" spacing="10.0">
                            <children>
-                              <Label text="Name:">
+                              <Label text="Nom:">
                                  <font>
                                     <Font name="System Bold" size="15.0" />
                                  </font>
@@ -46,7 +49,7 @@
                         </HBox>
                         <HBox prefHeight="100.0" prefWidth="200.0" spacing="10.0">
                            <children>
-                              <Label text="Last Name:">
+                              <Label text="Cognom:">
                                  <font>
                                     <Font name="System Bold" size="15.0" />
                                  </font>
@@ -60,7 +63,7 @@
                         </HBox>
                         <HBox prefHeight="100.0" prefWidth="200.0" spacing="10.0">
                            <children>
-                              <Label text="Phone Number:">
+                              <Label text="Número de telèfon:">
                                  <font>
                                     <Font name="System Bold" size="15.0" />
                                  </font>
@@ -74,7 +77,7 @@
                         </HBox>
                         <HBox prefHeight="100.0" prefWidth="200.0" spacing="10.0">
                            <children>
-                              <Label text="Email:">
+                              <Label text="Correu:">
                                  <font>
                                     <Font name="System Bold" size="15.0" />
                                  </font>
@@ -88,7 +91,7 @@
                         </HBox>
                         <HBox prefHeight="100.0" prefWidth="200.0" spacing="10.0">
                            <children>
-                              <Label text="Balance:">
+                              <Label text="Balanç:">
                                  <font>
                                     <Font name="System Bold" size="15.0" />
                                  </font>
@@ -102,7 +105,7 @@
                         </HBox>
                         <HBox prefHeight="100.0" prefWidth="200.0" spacing="10.0">
                            <children>
-                              <Label text="User status:">
+                              <Label text="Estat de usuari:">
                                  <font>
                                     <Font name="System Bold" size="15.0" />
                                  </font>
@@ -116,7 +119,7 @@
                         </HBox>
                         <HBox prefHeight="100.0" prefWidth="200.0" spacing="10.0">
                            <children>
-                              <Label text="Last status modified:">
+                              <Label text="Ultima modificacio estat:">
                                  <font>
                                     <Font name="System Bold" size="15.0" />
                                  </font>
@@ -128,7 +131,7 @@
                               </Label>
                            </children>
                         </HBox>
-                        <Label alignment="CENTER" prefHeight="17.0" prefWidth="352.0" style="-fx-background-color: rgb(220,220,220);" text="Transactions">
+                        <Label alignment="CENTER" prefHeight="17.0" prefWidth="352.0" style="-fx-background-color: rgb(220,220,220);" text="Transaccions">
                            <font>
                               <Font name="System Bold" size="15.0" />
                            </font>
@@ -143,5 +146,26 @@
                </children></AnchorPane>
         </items>
       </SplitPane>
+      <MenuBar layoutY="2.0" prefHeight="25.0" prefWidth="900.0" AnchorPane.bottomAnchor="573.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <menus>
+          <Menu mnemonicParsing="false" text="File">
+            <items>
+              <MenuItem mnemonicParsing="false" onAction="#closeDesktop" text="Sortir" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Filter">
+            <items>
+              <MenuItem mnemonicParsing="false" onAction="#userStatusFilter" text="Filtrar per estat de compte" />
+                  <MenuItem mnemonicParsing="false" onAction="#userBalanceFilter" text="Filtrar per rang de balanç" />
+                  <MenuItem mnemonicParsing="false" onAction="#userTransaccionsAmountFilter" text="Filtrar per número de transaccions" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Help">
+            <items>
+              <MenuItem mnemonicParsing="false" text="About" />
+            </items>
+          </Menu>
+        </menus>
+      </MenuBar>
    </children>
 </AnchorPane>

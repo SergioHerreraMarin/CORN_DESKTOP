@@ -1,4 +1,7 @@
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 import org.json.JSONArray;
@@ -7,9 +10,18 @@ import org.json.JSONObject;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.scene.Parent;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.ChoiceDialog;
+import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
+import javafx.util.Pair;
+
 
 public class ListUsersController implements Initializable {
 
@@ -83,8 +95,6 @@ public class ListUsersController implements Initializable {
                     // Get console information
                     JSONObject user = JSONlist.getJSONObject(i);
                     
-                    System.out.println(user.getString("userName"));
-
                     try{
                         // Load template and set controller
                         FXMLLoader loader = new FXMLLoader(resource);
@@ -138,11 +148,10 @@ public class ListUsersController implements Initializable {
                         Parent itemTemplate = loader.load();
                         TransactionItemController transactionItemController = loader.getController();
                         if(transaction.getInt("accepted") == 1){
-                            transactionItemController.setOrigin(transaction.getString("origin"));
-                        }else{
-                            transactionItemController.setOrigin("");
+                            transactionItemController.setOrigin(transaction.getInt("origin"));
                         }
-                        transactionItemController.setDestination(transaction.getString("destination"));
+                        
+                        transactionItemController.setDestination(transaction.getInt("destination"));
                         transactionItemController.setAmount(transaction.getString("amount"));
                         transactionItemController.setTimeFinish(dateFormat(transaction.getString("timeFinish")));
                         transactionsyPane.getChildren().add(itemTemplate);
@@ -161,6 +170,231 @@ public class ListUsersController implements Initializable {
         newDateFormat = newDateFormat.replace(".000Z", "");
         return newDateFormat;
     }
+
+    @FXML
+    private void userStatusFilter(){
+        yPane.getChildren().clear();
+
+        List<String> choices = new ArrayList<>();
+        choices.add("NO_VERFICAT");
+        choices.add("A_VERIFICAR");
+        choices.add("ACCEPTAT");
+        choices.add("REBUTJAT");
+
+        ChoiceDialog<String> dialog = new ChoiceDialog<>("NO_VERFICAT", choices);
+        dialog.setTitle("Filtrar per estat d'usuari");
+        dialog.setHeaderText("Filtrar per estat d'usuari");
+        dialog.setContentText("Estat de usuari:");
+
+        Optional<String> result = dialog.showAndWait();
+
+        if(result.isPresent()){
+            System.out.println("Your choice: " + result.get());
+            JSONObject obj = new JSONObject("{}");
+            obj.put("status", result.get());
+
+            UtilsHTTP.sendPOST(Main.protocol + "://" + Main.host + ":" + Main.port + "/api/get_profiles_by_status", obj.toString(), (response) -> {
+
+                JSONObject objResponse = new JSONObject(response);
+                if (objResponse.getString("status").equals("OK")) {
+
+                    JSONArray JSONlist = objResponse.getJSONArray("profiles"); //Este devuelve un array de objetos json
+                    URL resource = this.getClass().getResource("./src/userItemView.fxml");
+
+                    for(int i = 0; i < JSONlist.length(); i++){ 
+                        
+                        // Get console information
+                        JSONObject user = JSONlist.getJSONObject(i);
+                        
+                        System.out.println(user.getString("userName"));
+
+                        try{
+                            // Load template and set controller
+                            FXMLLoader loader = new FXMLLoader(resource);
+                            Parent itemTemplate = loader.load();
+                            UserItemController userItemController = loader.getController();
+
+                            System.out.println(user.getString("userName"));
+                            System.out.println(user.getString("userLastName"));
+                            System.out.println(user.getString("userPhoneNumber"));
+                            System.out.println(user.getString("userStatus"));
+                            System.out.println(user.getString("userStatusModifyTime"));
+                            
+                            // Fill user item 
+                            userItemController.setName(user.getString("userName"));
+                            userItemController.setLastName(user.getString("userLastName"));
+                            userItemController.setPhoneNumber(user.getString("userPhoneNumber"));
+                            userItemController.setEmail(user.getString("userEmail"));
+                            userItemController.setBalance(user.getString("userBalance"));
+                            userItemController.setStatus(user.getString("userStatus"));
+                            userItemController.setLastStatusModified(dateFormat(user.getString("userStatusModifyTime")));
+                            yPane.getChildren().add(itemTemplate);
+
+                        }catch(Exception e){
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            });
+        }
+    }
+
+
+    @FXML
+    private void userBalanceFilter(){
+
+        Optional<Pair<String,String>> result = customDialog("Filtrar per balanç", "Filtrar usuaris per rang de balanç");
+        System.out.println("min: " + result.get().getKey() + " max: " + result.get().getValue());
+        yPane.getChildren().clear();
+
+        JSONObject obj = new JSONObject("{}");
+        obj.put("minBalance", result.get().getKey());
+        obj.put("maxBalance", result.get().getValue());
+        UtilsHTTP.sendPOST(Main.protocol + "://" + Main.host + ":" + Main.port + "/api/get_profiles_by_range_balance", obj.toString(), (response) -> {
+
+            JSONObject objResponse = new JSONObject(response);
+            if (objResponse.getString("status").equals("OK")) {
+
+                JSONArray JSONlist = objResponse.getJSONArray("profiles"); //Este devuelve un array de objetos json
+                URL resource = this.getClass().getResource("./src/userItemView.fxml");
+
+                for(int i = 0; i < JSONlist.length(); i++){ 
+                    
+                    // Get console information
+                    JSONObject user = JSONlist.getJSONObject(i);
+                    
+                    System.out.println(user.getString("userName"));
+
+                    try{
+                        // Load template and set controller
+                        FXMLLoader loader = new FXMLLoader(resource);
+                        Parent itemTemplate = loader.load();
+                        UserItemController userItemController = loader.getController();
+
+                        System.out.println(user.getString("userName"));
+                        System.out.println(user.getString("userLastName"));
+                        System.out.println(user.getString("userPhoneNumber"));
+                        System.out.println(user.getString("userStatus"));
+                        System.out.println(user.getString("userStatusModifyTime"));
+                        
+                        // Fill user item 
+                        userItemController.setName(user.getString("userName"));
+                        userItemController.setLastName(user.getString("userLastName"));
+                        userItemController.setPhoneNumber(user.getString("userPhoneNumber"));
+                        userItemController.setEmail(user.getString("userEmail"));
+                        userItemController.setBalance(user.getString("userBalance"));
+                        userItemController.setStatus(user.getString("userStatus"));
+                        userItemController.setLastStatusModified(dateFormat(user.getString("userStatusModifyTime")));
+                        yPane.getChildren().add(itemTemplate);
+
+                    }catch(Exception e){
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+    }
+
+
+    @FXML
+    private void userTransaccionsAmountFilter(){
+        Optional<Pair<String,String>> result = customDialog("Filtrar per número de transaccions", "Filtrar usuaris per número de transaccions");
+        System.out.println("min: " + result.get().getKey() + " max: " + result.get().getValue());
+        yPane.getChildren().clear();
+
+        JSONObject obj = new JSONObject("{}");
+        obj.put("numMin", result.get().getKey());
+        obj.put("numMax", result.get().getValue());
+        UtilsHTTP.sendPOST(Main.protocol + "://" + Main.host + ":" + Main.port + "/api/get_profiles_by_range_num_transactions", obj.toString(), (response) -> {
+
+            JSONObject objResponse = new JSONObject(response);
+            if (objResponse.getString("status").equals("OK")) {
+
+                JSONArray JSONlist = objResponse.getJSONArray("profiles"); //Este devuelve un array de objetos json
+                URL resource = this.getClass().getResource("./src/userItemView.fxml");
+
+                for(int i = 0; i < JSONlist.length(); i++){ 
+                    
+                    // Get console information
+                    JSONObject user = JSONlist.getJSONObject(i);
+                    
+                    System.out.println(user.getString("userName"));
+
+                    try{
+                        // Load template and set controller
+                        FXMLLoader loader = new FXMLLoader(resource);
+                        Parent itemTemplate = loader.load();
+                        UserItemController userItemController = loader.getController();
+
+                        System.out.println(user.getString("userName"));
+                        System.out.println(user.getString("userLastName"));
+                        System.out.println(user.getString("userPhoneNumber"));
+                        System.out.println(user.getString("userStatus"));
+                        System.out.println(user.getString("userStatusModifyTime"));
+                        
+                        // Fill user item 
+                        userItemController.setName(user.getString("userName"));
+                        userItemController.setLastName(user.getString("userLastName"));
+                        userItemController.setPhoneNumber(user.getString("userPhoneNumber"));
+                        userItemController.setEmail(user.getString("userEmail"));
+                        userItemController.setBalance(user.getString("userBalance"));
+                        userItemController.setStatus(user.getString("userStatus"));
+                        userItemController.setLastStatusModified(dateFormat(user.getString("userStatusModifyTime")));
+                        yPane.getChildren().add(itemTemplate);
+
+                    }catch(Exception e){
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+    }
+
+
+    @FXML
+    private void closeDesktop(){
+        System.out.println("Cerrar app");
+    }
+
+
+    private Optional<Pair<String, String>> customDialog(String title, String header){
+
+        Dialog<Pair<String,String>> dialog = new Dialog<>();
+        dialog.setTitle(title);
+        dialog.setHeaderText(header);
+        
+        ButtonType filterButton = new ButtonType("Filtrar", ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(filterButton, ButtonType.CANCEL);
+        
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(20, 150, 10, 10));
+
+        TextField minBalance = new TextField();
+        minBalance.setPromptText("Min");
+        TextField maxBalance = new TextField();
+        maxBalance.setPromptText("Max");
+
+        grid.add(new Label("Min:"), 0, 0);
+        grid.add(minBalance, 1, 0);
+        grid.add(new Label("Max:"), 0, 1);
+        grid.add(maxBalance, 1, 1);
+
+        dialog.getDialogPane().setContent(grid);
+
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == filterButton) {
+                return new Pair<>(minBalance.getText(), maxBalance.getText());
+            }
+            return null;
+        });
+
+        Optional<Pair<String, String>> result = dialog.showAndWait();
+        
+        return result;
+    }
+
 
 }
 //insert into Transactions(origin,destination,amount,token,accepted,timeSetup,timeStart,timeFinish) values (984752897, 661571197,'45',"abcde",false,NOW(),NOW(),NOW());

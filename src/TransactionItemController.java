@@ -13,11 +13,11 @@ public class TransactionItemController {
     private Label timeFinish;
 
 
-    public void setOrigin(String origin) {
-        this.origin.setText(origin);
+    public void setOrigin(int origin) {
+        this.origin.setText(Integer.toString(origin));
     }
-    public void setDestination(String destination) {
-        this.destination.setText(destination);
+    public void setDestination(int destination) {
+        this.destination.setText(Integer.toString(destination));
     }
     public void setAmount(String amount) {
         this.amount.setText(amount);
