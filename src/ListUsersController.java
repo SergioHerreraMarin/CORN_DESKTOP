@@ -7,6 +7,8 @@ import java.util.ResourceBundle;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -14,10 +16,13 @@ import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceDialog;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.util.Pair;
@@ -43,9 +48,26 @@ public class ListUsersController implements Initializable {
     private Label dataUserStatus;
     @FXML
     private Label dataLastStatusModified;
+    @FXML
+    private ComboBox userStatusCombobox;
+    @FXML
+    private ImageView dniFrontImageView;
+    @FXML
+    private ImageView dniBackImageView;
+
+    ObservableList<String> userStatusComboboxOptions = 
+    FXCollections.observableArrayList(
+        "NO_VERFICAT",
+        "A_VERIFICAR",
+        "ACCEPTAT",
+        "REBUTJAT"
+    );
+
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        userStatusCombobox.setItems(userStatusComboboxOptions);
+        userStatusCombobox.getSelectionModel().selectFirst();
         getUsers();
     }
 
@@ -75,6 +97,25 @@ public class ListUsersController implements Initializable {
 
     public void setLastStatusModified(String lastStatusModified){
         this.dataLastStatusModified.setText(lastStatusModified);
+    }
+
+    public void setDniFront(Image image){
+        dniFrontImageView.setImage(image);
+        dniFrontImageView.setPreserveRatio(true);
+    }
+
+    public void setDniBack(Image image){
+        dniBackImageView.setImage(image);
+        dniBackImageView.setPreserveRatio(true);
+    }
+
+    public void setUserStatusComboboxDefaultOption(String option){
+        userStatusCombobox.setValue(option); 
+    }
+
+    public void clearImages(){
+        dniFrontImageView.setImage(null);
+        dniBackImageView.setImage(null);
     }
 
     private void getUsers(){
@@ -399,6 +440,33 @@ public class ListUsersController implements Initializable {
         return result;
     }
 
+
+    @FXML
+    private void modifyUserStatus(){
+
+        JSONObject obj = new JSONObject("{}");
+            obj.put("phone", dataPhoneNumber.getText());
+            obj.put("status", userStatusCombobox.getValue());
+            System.out.println(dataPhoneNumber.getText());
+            System.out.println(userStatusCombobox.getValue());
+
+        UtilsHTTP.sendPOST(Main.protocol + "://" + Main.host + ":" + Main.port + "/api/upload_status", obj.toString(), (response) -> {
+
+            JSONObject objResponse = new JSONObject(response);
+            if (objResponse.getString("status").equals("OK")) {
+                System.out.println(objResponse.getString("message"));
+            }else{
+                System.out.println(objResponse.getString("message"));
+            }
+        });
+
+    }
+
+
+    @FXML
+    private void clearFilters(){
+        getUsers();
+    }
 
 }
 //insert into Transactions(origin,destination,amount,token,accepted,timeSetup,timeStart,timeFinish) values (984752897, 661571197,'45',"abcde",false,NOW(),NOW(),NOW());
